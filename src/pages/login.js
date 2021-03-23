@@ -10,6 +10,12 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 
+
+//Redux Stuff
+import { connect } from 'react-redux';
+import { loginUser } from '../redux/actions/userActions';
+
+
 const styles = (theme) => ({
     ...theme.spreadThis
 })
@@ -19,52 +25,40 @@ class login extends Component {
 
     constructor() {
         super();
+        console.log("constructor")
+
         this.state = {
             email: '',
             password: '',
-            loading: false,
             errors: {}
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        console.log("okkkkkkkkkkk")
+        this.setState({ errors: nextProps.UI.errors });
+    }
+
     handleSubmit = (event) => {
         event.preventDefault();
-        this.setState({
-            loading: true
-        });
         const userData = {
             email: this.state.email,
             password: this.state.password
         }
-        axios.post('/login', userData)
-            .then(res => {
-                console.log(res.data);
-                localStorage.setItem("x-auth-token", res.headers['x-auth-token']);
-                this.setState({
-                    loading: false
-                });
-                this.props.history.push('/');
-            })
-            .catch(err => {
-                //console.log(">>", err.response.data);
-                this.setState({
-                    errors: err.response.data,
-                    loading: false
-                })
-            })
-
+        this.props.loginUser(userData, this.props.history);
     }
 
     handleChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value
         })
+        console.log("this state ===> ", this.state);
     }
 
     render() {
-
-        const { classes } = this.props;
-        const { loading, errors } = this.state;
+        console.log("render: ", this.props);
+        const { classes, UI: { loading } } = this.props;
+        const { errors } = this.state;
 
         return (
             <Grid container className={classes.form}>
@@ -80,8 +74,8 @@ class login extends Component {
                             type="email"
                             placeholder="Email"
                             className={classes.textField}
-                            helperText={errors.email}
-                            error={errors.email ? true : false}
+                            // helperText={errors.email}
+                            // error={errors.email ? true : false}
                             value={this.state.email}
                             onChange={this.handleChange} fullWidth />
                         <TextField
@@ -90,8 +84,8 @@ class login extends Component {
                             type="password"
                             placeholder="Password"
                             className={classes.textField}
-                            helperText={errors.password}
-                            error={errors.password ? true : false}
+                            // helperText={errors.password}
+                            // error={errors.password ? true : false}
                             value={this.state.password}
                             onChange={this.handleChange} fullWidth />
 
@@ -120,7 +114,23 @@ class login extends Component {
     }
 }
 
+
 login.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    loginUser: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+    UI: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => {
+    console.log("mapStateToProps: ", state);
+    return {
+        user: state.user,
+        UI: state.UI
+    }
 }
-export default withStyles(styles)(login)
+
+const mapActionsToProps = {
+    loginUser
+}
+export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(login))
