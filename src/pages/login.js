@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 
 // MUI Stuff
 import Grid from '@material-ui/core/Grid';
@@ -35,8 +34,8 @@ class login extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log("okkkkkkkkkkk")
-        this.setState({ errors: nextProps.UI.errors });
+        console.log("okkkkkkkkkkk");
+        if (nextProps.UI.errors) this.setState({ errors: nextProps.UI.errors });
     }
 
     handleSubmit = (event) => {
