@@ -1,4 +1,4 @@
-import { SET_USER, SET_ERRORS, CLEAR_ERRORS, LOADING_UI, SET_UNAUTHENTICATED } from '../types';
+import { SET_USER, SET_ERRORS, CLEAR_ERRORS, LOADING_UI, SET_UNAUTHENTICATED, LOADING_USER } from '../types';
 import axios from 'axios';
 
 export const loginUser = (userData, history) => (dispatch) => {
@@ -50,6 +50,7 @@ export const signupUser = (newUserData, history) => (dispatch) => {
 }
 
 export const getUserData = () => (dispatch) => {
+    dispatch({ type: LOADING_USER })
     const token = localStorage.getItem("x-auth-token");
     axios.get('/getUserData', {
         headers: {
@@ -69,6 +70,20 @@ export const logoutUser = () => (dispatch) => {
     localStorage.removeItem("x-auth-token");
     delete axios.defaults.common['Authorization'];
     dispatch({ type: SET_UNAUTHENTICATED })
+}
+
+export const uploadImage = (formData) => (dispatch) => {
+    //dispatch({ type: LOADING_USER });
+    const token = localStorage.getItem("x-auth-token");
+    axios.post('/uploadImage', formData, {
+        headers: {
+            'x-auth-token': `${token}`
+        }
+    })
+        .then(() => {
+            dispatch(getUserData());
+        })
+        .catch(err => console.log(err))
 }
 
 const setAuthorizationHeader = (token) => {
