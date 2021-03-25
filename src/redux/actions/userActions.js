@@ -66,9 +66,24 @@ export const getUserData = () => (dispatch) => {
         .catch(err => console.log(err))
 }
 
+export const editUserDetails = (userDetails) => (dispatch) => {
+    const token = localStorage.getItem("x-auth-token");
+    //dispatch({ type: LOADING_USER });
+    axios
+        .post('/editUserDetails', userDetails, {
+            headers: {
+                'x-auth-token': `${token}`
+            }
+        })
+        .then(() => {
+            dispatch(getUserData());
+        })
+        .catch(err => console.log(err))
+}
+
 export const logoutUser = () => (dispatch) => {
     localStorage.removeItem("x-auth-token");
-    delete axios.defaults.common['Authorization'];
+    //delete axios.defaults.common['Authorization'];
     dispatch({ type: SET_UNAUTHENTICATED })
 }
 

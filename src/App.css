@@ -14,6 +14,9 @@ body {
   margin: 0 auto
 }
 
+.nav-container svg {
+  color: #FFF;
+}
 a {
   text-decoration: none
 }
