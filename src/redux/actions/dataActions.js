@@ -1,7 +1,9 @@
+import { LOADING_DATA, SET_SCREAMS,  LIKE_SCREAM, UNLIKE_SCREAM} from '../types';
 import axios from "axios";
 
 export const getScreams = () => dispatch => {
-    dispatch({ type: LOADING_DATA });
+    //dispatch({ type: LOADING_DATA });
+    //console.log("screas are:");
     axios
         .get('/screams')
         .then((res) => {
@@ -18,9 +20,14 @@ export const getScreams = () => dispatch => {
         })
 }
 
-export const likeScream = (screamId) => dispatch => {
+export const likeScream = screamId => dispatch => {
+    const token = localStorage.getItem("x-auth-token");
     axios
-        .get(`/scream/${screamId}/like`)
+        .get(`/scream/${screamId}/like`, {
+            headers: {
+                'x-auth-token': `${token}`
+            }
+        })
         .then(res => {
             dispatch({
                 type: LIKE_SCREAM,
