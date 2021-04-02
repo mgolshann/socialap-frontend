@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import PropTypes from 'prop-types';
+import DeleteScream from './DeleteScream';
+
 // MUI Stuff
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -22,6 +24,7 @@ import { likeScream, unLikeScream } from '../redux/actions/dataActions';
 
 const styles = {
     card: {
+        position: 'relative',
         display: 'flex',
         marginBottom: 20
     },
@@ -37,6 +40,7 @@ const styles = {
 
 
 class Scream extends Component {
+
 
     likedScream = () => {
         if (this.props.user.likes &&
@@ -57,12 +61,16 @@ class Scream extends Component {
     }
 
     render() {
-
         dayjs.extend(relativeTime);
-        const { classes,
+        const {
+            classes,
             scream: { _id, body, createdAt, userImage, userHandle, likeCount, commentCount },
-            user: { authenticated }
+            user: { authenticated, credentials: { handle } }
         } = this.props;
+
+        let deleteButton = authenticated && userHandle === handle ? (
+            <DeleteScream screamId={_id} />
+        ) : null
 
         let likeButton = !authenticated ? (
             <MyButton tip="Like">
@@ -93,6 +101,8 @@ class Scream extends Component {
                         color="primary"
                         component={Link}
                         to={`/users/${userHandle}`}>{userHandle}</Typography>
+
+                    {deleteButton}
                     <Typography variant="body2" color="textSecondary">
                         {dayjs(createdAt).fromNow()}
                     </Typography>
@@ -120,9 +130,11 @@ Scream.propTypes = {
     classes: PropTypes.object.isRequired
 }
 
-const mapStateToProps = state => ({
-    user: state.user
-})
+const mapStateToProps = state => {
+    return {
+        user: state.user
+    }
+}
 
 const mapActionToProps = {
     likeScream,

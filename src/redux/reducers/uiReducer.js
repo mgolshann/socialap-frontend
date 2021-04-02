@@ -6,8 +6,6 @@ const initialState = {
 }
 
 export default function(state = initialState, action) {
-    console.log("UIReducer:", action.type);
-
     switch(action.type) {
         case SET_ERRORS:
             return {

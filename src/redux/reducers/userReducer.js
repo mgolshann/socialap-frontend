@@ -10,7 +10,6 @@ const initialState = {
 }
 
 export default function (state = initialState, action) {
-    console.log("userReducer:", action.type);
     switch (action.type) {
         case SET_AUTHENTICATED:
             return {
@@ -37,14 +36,16 @@ export default function (state = initialState, action) {
                     ...state.likes,
                     {
                         userHandle: state.credentials.handle,
-                        screamId: action.payload.screamId
+                        screamId: action.payload._id
                     }
                 ]
             }
         case UNLIKE_SCREAM:
             return {
                 ...state,
-                likes: state.likes.filter(like => like.screamId !== action.payload.screamId)
+                likes: state.likes.filter(
+                    (like) => like.screamId !== action.payload._id
+                )
             }
         default:
             return state;

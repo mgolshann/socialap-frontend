@@ -1,9 +1,19 @@
-import { LOADING_DATA, SET_SCREAMS,  LIKE_SCREAM, UNLIKE_SCREAM} from '../types';
+import {
+    LOADING_DATA,
+    SET_SCREAMS,
+    LIKE_SCREAM,
+    UNLIKE_SCREAM,
+    DELETE_SCREAM,
+    LOADING_UI,
+    SET_ERRORS,
+    POST_SCREAM,
+    CLEAR_ERRORS
+} from '../types';
+
 import axios from "axios";
 
 export const getScreams = () => dispatch => {
     //dispatch({ type: LOADING_DATA });
-    //console.log("screas are:");
     axios
         .get('/screams')
         .then((res) => {
@@ -37,10 +47,14 @@ export const likeScream = screamId => dispatch => {
         .catch(err => console.log(err))
 }
 
-
 export const unLikeScream = (screamId) => dispatch => {
+    const token = localStorage.getItem("x-auth-token");
     axios
-        .get(`/scream/${screamId}/unLike`)
+        .get(`/scream/${screamId}/unLike`, {
+            headers: {
+                'x-auth-token': `${token}`
+            }
+        })
         .then(res => {
             dispatch({
                 type: UNLIKE_SCREAM,
@@ -48,4 +62,36 @@ export const unLikeScream = (screamId) => dispatch => {
             })
         })
         .catch(err => console.log(err))
+}
+
+export const deleteScream = screamId => dispatch => {
+    const token = localStorage.getItem("x-auth-token");
+    axios
+        .delete(`/scream/${screamId}/deleteScream`, {
+            headers: {
+                'x-auth-token': `${token}`
+            }
+        })
+        .then(res => {
+            dispatch({ type: DELETE_SCREAM, payload: res.data })
+        })
+        .catch(err => console.log(err))
+}
+
+export const postScream = newScream => dispatch => {
+    dispatch({ type: LOADING_UI });
+    const token = localStorage.getItem('x-auth-token');
+    axios
+        .post('/scream', newScream, { headers: { 'x-auth-token': `${token}` } })
+        .then(res => {
+            dispatch({ type: POST_SCREAM, payload: res.data })
+            dispatch({ type: CLEAR_ERRORS })
+        })
+        .catch(err => {
+            dispatch({ type: SET_ERRORS, payload: err.response.data })
+        })
+}
+
+export const clearErrors = () => dispatch => {
+    dispatch({ type: CLEAR_ERRORS })
 }

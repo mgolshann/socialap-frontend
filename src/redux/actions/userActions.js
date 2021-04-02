@@ -2,13 +2,10 @@ import { SET_USER, SET_ERRORS, CLEAR_ERRORS, LOADING_UI, SET_UNAUTHENTICATED, LO
 import axios from 'axios';
 
 export const loginUser = (userData, history) => (dispatch) => {
-    console.log("loginUser ====> ");
     //dispatch({ type: LOADING_UI });
 
     axios.post('/login', userData)
         .then(res => {
-            console.log("login result =====> ", res.data);
-
             setAuthorizationHeader(res.headers['x-auth-token']);
             dispatch(getUserData());
             // dispatch({ type: CLEAR_ERRORS });
@@ -16,7 +13,6 @@ export const loginUser = (userData, history) => (dispatch) => {
             history.push('/');
         })
         .catch(err => {
-            console.log(">>>>>>", err);
             dispatch({
                 type: SET_ERRORS,
                 payload: err.response.data
@@ -26,12 +22,10 @@ export const loginUser = (userData, history) => (dispatch) => {
 }
 
 export const signupUser = (newUserData, history) => (dispatch) => {
-    console.log("loginUser ====> ");
     //dispatch({ type: LOADING_UI });
 
     axios.post('/signup', newUserData)
         .then(res => {
-            console.log("signup result =====> ", res.data);
 
             setAuthorizationHeader(res.headers['x-auth-token']);
             dispatch(getUserData());
@@ -40,7 +34,6 @@ export const signupUser = (newUserData, history) => (dispatch) => {
             history.push('/');
         })
         .catch(err => {
-            console.log(">>>>>>", err);
             dispatch({
                 type: SET_ERRORS,
                 payload: err.response.data
