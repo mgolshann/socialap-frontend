@@ -7,7 +7,7 @@ import {
     LOADING_UI,
     SET_ERRORS,
     POST_SCREAM,
-    CLEAR_ERRORS
+    CLEAR_ERRORS, SET_SCREAM, STOP_LOADING_UI
 } from '../types';
 
 import axios from "axios";
@@ -94,4 +94,16 @@ export const postScream = newScream => dispatch => {
 
 export const clearErrors = () => dispatch => {
     dispatch({ type: CLEAR_ERRORS })
+}
+
+export const getScream = screamId => dispatch => {
+    dispatch({ type: LOADING_UI });
+    const token = localStorage.getItem('x-auth-token');
+    axios
+        .get(`/scream/${screamId}`, { headers: { 'x-auth-token': token } })
+        .then(res => {
+            dispatch({ type: SET_SCREAM, payload: res.data });
+            dispatch({ type: STOP_LOADING_UI })
+        })
+        .catch(err => console.log(err))
 }
